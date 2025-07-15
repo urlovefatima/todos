@@ -1,67 +1,3 @@
-# name: Pull Request
-# on:
-#   push:
-#     branches:
-#       - 'DIC1-*'
-#       - 'IS-*'
-
-# jobs:
-#   build:
-#     runs-on: ubuntu-latest
-
-#     env:
-#       MY_ENV_VAR: value
-
-#     steps:
-#       - uses: actions/checkout@v3
-#         with:
-#           token: ${{ secrets.GITHUB_TOKEN }}
-
-#       - name: Set up Java
-#         uses: actions/setup-java@v3
-#         with:
-#           java-version: '17'
-#           distribution: 'temurin'
-
-#       - name: Scan de secrets
-#         uses: gitleaks/gitleaks-action@v2
-#         env: 
-#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN}}
-       
-
-#       - name: Scan des vulnérabilités
-#         # Cette étape analyse les bibliothèques Java (pom.xml) pour détecter les vulnérabilités (CVEs)
-#         run: |
-#          set -x
-#          curl -L --fail https://github.com/jeremylong/DependencyCheck/releases/download/v9.0.9/dependency-check-9.0.9-release.zip -o dc.zip
-#          unzip dc.zip -d dc
-#          chmod +x ./dc/dependency-check/bin/dependency-check.sh
-#          ./dc/dependency-check/bin/dependency-check.sh \
-#          --project "todo-app" \
-#          --scan . \
-#          --format HTML \
-#          --out dc-report \
-#          --failOnCVSS 7 \
-#          --nvdApiKey "${{ secrets.NVDAPIKEY }}"\
-#          --nvdApiDelay 10000
-#       - name: Unit Tests
-#         run: |
-#           mvn test -Put -Pit
-#         shell: bash
-
-#       - name: Quality Gate
-#         run: |
-#           echo "Todo : Quality Gate"
-#         shell: bash
-
-#       - name: Check Quality Gate
-#         run: |
-#           echo "Todo : Check Quality Gate"
-#         shell: bash
-
-
-
-
 name: Pull Request
 on:
   push:
@@ -75,8 +11,6 @@ jobs:
 
     env:
       MY_ENV_VAR: value
-      NVD_API_KEY: ${{ secrets.NVDAPIKEY }}
-      NVD_API_DELAY: 6000
 
     steps:
       - uses: actions/checkout@v3
@@ -94,6 +28,7 @@ jobs:
         env: 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN}}
        
+
       - name: Scan des vulnérabilités
         # Cette étape analyse les bibliothèques Java (pom.xml) pour détecter les vulnérabilités (CVEs)
         run: |
@@ -102,21 +37,13 @@ jobs:
          unzip dc.zip -d dc
          chmod +x ./dc/dependency-check/bin/dependency-check.sh
          ./dc/dependency-check/bin/dependency-check.sh \
-           --project "todo-app" \
-           --scan . \
-           --format HTML \
-           --out dc-report \
-           --failOnCVSS 7 \
-           --nvdApiKey "${{ secrets.NVDAPIKEY }}" \
-           --nvdApiDelay 6000
-           
-      - name: Upload Vulnerability Report
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: dependency-check-report
-          path: dc-report/
-
+         --project "todo-app" \
+         --scan . \
+         --format HTML \
+         --out dc-report \
+         --failOnCVSS 7 \
+         --nvdApiKey "${{ secrets.NVDAPIKEY }}" \
+         --nvdApiDelay 10000
       - name: Unit Tests
         run: |
           mvn test -Put -Pit
@@ -131,3 +58,4 @@ jobs:
         run: |
           echo "Todo : Check Quality Gate"
         shell: bash
+
