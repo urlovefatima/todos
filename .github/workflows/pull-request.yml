@@ -43,6 +43,7 @@ jobs:
          --out dc-report \
          --failOnCVSS 7 \
          --nvdApiKey "${{ secrets.NVDAPIKEY }}"
+         --nvdApiDelay 10000
       - name: Unit Tests
         run: |
           mvn test -Put -Pit
