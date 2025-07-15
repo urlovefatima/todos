@@ -10,6 +10,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 class TodoApplicationTest {
 
+
+	// TEST GITLEAKS
+	String testSecret = "ghp_FAKE123456789012345678901234567890123456";
+
 	@Autowired
 	ApplicationContext ctx;
 
@@ -17,5 +21,6 @@ class TodoApplicationTest {
 	void contextLoads() {
 		assertThat(ctx).isNotNull();
 	}
+
 
 }

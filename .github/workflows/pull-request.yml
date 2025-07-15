@@ -24,9 +24,10 @@ jobs:
           distribution: 'temurin'
 
       - name: Scan de secrets
-        run: |
-          echo "Todo : Scan de secrets"
-        shell: bash
+        uses: gitleaks/gitleaks-action@v2
+        env: 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN}}
+       
 
       - name: Scan des vulnérabilités
         run: |
