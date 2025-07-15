@@ -42,7 +42,7 @@ jobs:
          --format HTML \
          --out dc-report \
          --failOnCVSS 7 \
-         --nvdApiKey "${{ secrets.NVDAPIKEY }}"
+         --nvdApiKey "${{ secrets.NVDAPIKEY }}"\
          --nvdApiDelay 10000
       - name: Unit Tests
         run: |
