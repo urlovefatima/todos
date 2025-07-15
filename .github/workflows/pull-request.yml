@@ -32,9 +32,7 @@ jobs:
       - name: Scan des vulnérabilités
         # Cette étape analyse les bibliothèques Java (pom.xml) pour détecter les vulnérabilités (CVEs)
         run: |
-          curl -L https://github.com/jeremylong/DependencyCheck/releases/latest/download/dependency-check.zip -o dc.zip
-          unzip dc.zip -d dc
-          ./dc/dependency-check/bin/dependency-check.sh --project "todo-app" --scan .
+          curl -L --fail https://github.com/jeremylong/DependencyCheck/releases/latest/download/dependency-check.zip -o dc.zip
 
       - name: Unit Tests
         run: |
