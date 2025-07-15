@@ -41,7 +41,8 @@ jobs:
          --scan . \
          --format HTML \
          --out dc-report \
-         --failOnCVSS 7
+         --failOnCVSS 7 \
+         --nvdApiKey "${{ secrets.NVDAPIKEY }}"
       - name: Unit Tests
         run: |
           mvn test -Put -Pit
