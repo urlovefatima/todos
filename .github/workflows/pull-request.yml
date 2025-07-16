@@ -32,7 +32,7 @@ jobs:
       - name: Scan des vulnérabilités
         # Cette étape analyse les bibliothèques Java (pom.xml) pour détecter les vulnérabilités (CVEs)
         run: |
-          mvn org.owasp:dependency-check-maven:8.4.0:check \
+          mvn org.owasp:dependency-check-maven:8.2.1:check \
           -DnvdApiKey=${{ secrets.NVD_API_KEY }} \
           -DfailOnCVSS=7 \
           -Dformat=ALL \
