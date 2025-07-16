@@ -21,8 +21,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import sn.ept.git.seminaire.cicd.data.TestData;
 import sn.ept.git.seminaire.cicd.models.TodoDTO;
+import sn.ept.git.seminaire.cicd.models.TagDTO;
 import sn.ept.git.seminaire.cicd.entities.Todo;
+import sn.ept.git.seminaire.cicd.entities.Tag;
 import sn.ept.git.seminaire.cicd.repositories.TodoRepository;
+import sn.ept.git.seminaire.cicd.repositories.TagRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -37,12 +40,14 @@ public class CucumberStepIT {
 
     private final static String BASE_URI = "http://localhost";
     public static final String API_PATH = "/cicd/api/todos";
+    public static final String TAG_API_PATH = "/cicd/api/tags";
     public static final String KEY_COMPLETED = "completed";
     public static final String KEY_ID = "id";
     public static final String KEY_TITLE = "title";
     public static final String KEY_DESCRIPTION = "description";
     public static final String KEY_DATE_DEBUT = "date_debut";
     public static final String KEY_DATE_FIN = "date_fin";
+    public static final String KEY_NAME = "name";
     public static final String KEY_SYSTEM_ID = "system_id";
     public static final String KEY_SYSTEM_NAME = "system_name";
     public static final String KEY_TYPE = "type";
@@ -53,9 +58,12 @@ public class CucumberStepIT {
     private int port;
     @Autowired
     private TodoRepository todoRepository;
+    @Autowired
+    private TagRepository tagRepository;
 
     private String title;
     private String description;
+    private String tagName;
     private Response response;
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private LocalDateTime dateDebut;
@@ -70,6 +78,7 @@ public class CucumberStepIT {
     @Before
     public void init() {
         todoRepository.deleteAll();
+        tagRepository.deleteAll();
         dateDebut = TestData.Default.dateDebut;
         dateFin = TestData.Default.dateFin;
     }
@@ -254,6 +263,108 @@ public class CucumberStepIT {
 
     private String formatNullable(String value) {
         return StringUtils.isNotBlank(value) && value.trim().toLowerCase().equals("null") ? null : value;
+    }
+
+    // ==================== TAG STEP DEFINITIONS ====================
+
+    @Given("table tag contains data:")
+    public void tableTagContainsData(DataTable dataTable) {
+        List<Tag> tagsList = dataTable
+                .asMaps(String.class, String.class)
+                .stream()
+                .map(line -> Tag
+                        .builder()
+                        .id(line.get(KEY_ID))
+                        .name(line.get(KEY_NAME))
+                        .version(0)
+                        .createdDate(TestData.Default.createdDate)
+                        .lastModifiedDate(TestData.Default.lastModifiedDate)
+                        .build()
+                ).collect(Collectors.toUnmodifiableList());
+        tagRepository.saveAllAndFlush(tagsList);
+    }
+
+    @And("the following tag to add:")
+    public void theFollowingTagToAdd(DataTable dataTable) {
+        this.theFollowingTagToUpdate(dataTable);
+    }
+
+    @And("the following tag to update:")
+    public void theFollowingTagToUpdate(DataTable dataTable) {
+        Optional<Map<String, String>> optional = dataTable
+                .asMaps(String.class, String.class)
+                .stream()
+                .findFirst();
+        Assertions.assertThat(optional).isPresent();
+        Map<String, String> line = optional.get();
+        this.tagName = formatNullable(line.get(KEY_NAME));
+    }
+
+    @When("call add tag")
+    public void callAddTag() {
+        TagDTO requestBody = TagDTO
+                .builder()
+                .name(this.tagName)
+                .build();
+        response = request()
+                .body(requestBody)
+                .when().post(TAG_API_PATH);
+    }
+
+    @When("call find all tags with page={int}, size={int} and sort={string}")
+    public void callFindAllTagsWithPageSizeAndSorting(int page, int size, String sort) {
+        response = request().contentType(ContentType.JSON)
+                .log()
+                .all()
+                .when().get(TAG_API_PATH + "?page=%s&size=%s&%s".formatted(page, size, sort));
+    }
+
+    @When("call find tag by id with id={string}")
+    public void callFindTagByIdWithId(String id) {
+        response = request()
+                .when()
+                .get(TAG_API_PATH + "/" + id);
+    }
+
+    @When("call update tag with id={string}")
+    public void callUpdateTagWithId(String id) {
+        TagDTO requestBody = TagDTO
+                .builder()
+                .name(this.tagName)
+                .build();
+        response = request()
+                .body(requestBody)
+                .when()
+                .put(TAG_API_PATH + "/" + id);
+    }
+
+    @When("call delete tag with id={string}")
+    public void callDeleteTagWithId(String id) {
+        response = request()
+                .when()
+                .delete(TAG_API_PATH + "/" + id);
+    }
+
+    @And("the returned tag has following properties:")
+    public void returnedTagHasProperties(DataTable dataTable) {
+        Optional<Map<String, String>> optional = dataTable
+                .asMaps(String.class, String.class)
+                .stream()
+                .findFirst();
+        Assertions.assertThat(optional).isPresent();
+        Map<String, String> line = optional.get();
+        response.then()
+                .assertThat()
+                .body(KEY_NAME, CoreMatchers.equalTo(line.get(KEY_NAME)));
+    }
+
+    @And("the returned page has following tag content:")
+    public void theReturnedPageHasFollowingTagContent(DataTable dataTable) {
+        List<Map<String, String>> maps = dataTable.asMaps(String.class, String.class);
+        Assertions.assertThat(maps.size())
+                .isEqualTo(response.jsonPath().getList("content").size());
+        maps.forEach(line -> response.then().assertThat()
+                .body(getKeyFromPageContent(KEY_NAME), Matchers.hasItem(line.get(KEY_NAME))));
     }
 
 
