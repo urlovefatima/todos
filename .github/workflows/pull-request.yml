@@ -37,6 +37,7 @@ jobs:
           -DfailOnCVSS=7 \
           -Dformat=ALL \
           -DoutputDirectory=reports
+          -DsuppressHtmlReport=true
         shell: bash
       
       - name: Unit Tests
