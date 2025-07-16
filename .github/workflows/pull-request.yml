@@ -34,7 +34,7 @@ jobs:
         run: |
           # Téléchargement et extraction (version light)
           echo "⬇️ Téléchargement de Dependency-Check..."
-          curl -sSfL https://github.com/jeremylong/DependencyCheck/releases/download/v9.0.10/dependency-check-9.0.10-release.zip -o dc.zip
+          curl -sSfL https://github.com/jeremylong/DependencyCheck/releases/download/v9.0.9/dependency-check-9.0.9-release.zip -o dc.zip
           unzip -q dc.zip -d ./dependency-check
           chmod +x ./dependency-check/bin/dependency-check.sh
            # Configuration minimale pour PR (scan rapide)
