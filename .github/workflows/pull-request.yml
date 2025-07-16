@@ -31,32 +31,13 @@ jobs:
 
       - name: Scan des vulnérabilités
         # Cette étape analyse les bibliothèques Java (pom.xml) pour détecter les vulnérabilités (CVEs)
-        uses: dependency-check/Dependency-Check_Action@main
-        id: dependency-check
-        with:
-          project: 'MyJavaProject'
-          path: '.'
-          format: 'ALL'
-          args: >
-            --enableRetired
-            --enableExperimental
-            --failOnCVSS 7
-            --nvdApiKey ${{ secrets.NVD_API_KEY }}
-            --nvdApiDelay 2000
-            --nvdValidForHours 24
-            --out reports
-            --scan "**/*.jar"
-            --scan "**/pom.xml"
-            --exclude "**/target/**"
-            --exclude "**/test/**"
-      - name: Upload Dependency-Check Report
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: dependency-check-report
-          path: reports/
-          retention-days: 30
-
+        run: |
+          mvn org.owasp:dependency-check-maven:8.4.0:check \
+          -DnvdApiKey=${{ secrets.NVD_API_KEY }} \
+          -DfailOnCVSS=7 \
+          -Dformat=ALL \
+          -DoutputDirectory=reports
+        shell: bash
       
       - name: Unit Tests
         run: |

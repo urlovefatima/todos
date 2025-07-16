@@ -251,6 +251,22 @@
         <finalName>todos</finalName>
         <plugins>
 
+
+
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>8.4.0</version>
+                <configuration>
+                    <nvdApiKey>${nvdApiKey}</nvdApiKey>
+                    <failOnCVSS>7</failOnCVSS>
+                    <formats>
+                        <format>ALL</format>
+                    </formats>
+                    <outputDirectory>reports</outputDirectory>
+                </configuration>
+            </plugin>
+
             <plugin>
                 <groupId>io.github.git-commit-id</groupId>
                 <artifactId>git-commit-id-maven-plugin</artifactId>
