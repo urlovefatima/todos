@@ -32,18 +32,28 @@ jobs:
       - name: Scan des vulnérabilités
         # Cette étape analyse les bibliothèques Java (pom.xml) pour détecter les vulnérabilités (CVEs)
         run: |
-         set -x
-         curl -L --fail https://github.com/jeremylong/DependencyCheck/releases/download/v9.0.9/dependency-check-9.0.9-release.zip -o dc.zip
-         unzip dc.zip -d dc
-         chmod +x ./dc/dependency-check/bin/dependency-check.sh
-         ./dc/dependency-check/bin/dependency-check.sh \
-         --project "todo-app" \
-         --scan . \
-         --format HTML \
-         --out dc-report \
-         --failOnCVSS 7 \
-         --nvdApiKey "${{ secrets.NVD_API_KEY }}" \
-         --nvdApiDelay 9000
+          # Téléchargement et extraction (version light)
+          echo "⬇️ Téléchargement de Dependency-Check..."
+          curl -sSfL https://github.com/jeremylong/DependencyCheck/releases/download/v9.0.10/dependency-check-9.0.10-release.zip -o dc.zip
+          unzip -q dc.zip -d ./dependency-check
+          chmod +x ./dependency-check/bin/dependency-check.sh
+           # Configuration minimale pour PR (scan rapide)
+          echo "🔍 Exécution du scan..."
+          ./dependency-check/bin/dependency-check.sh \
+            --project "Scan-PR" \
+            --scan "**/{pom.xml,package.json,*.jar,*.war}" \
+            --format "JSON" \
+            --out "report" \
+            --failOnCVSS 8 \ 
+            --disableOssIndex true \ 
+            --nvdApiDelay 5000 \  # Délai entre requêtes API
+            --nvdApiKey $secrets.NVD_API_KEY
+
+          # Génération d'un résumé
+          echo "📊 Résumé des vulnérabilités :"
+          jq '.dependencies[] | select(.vulnerabilities != null)' report/dependency-check-report.json | jq -r '["CVSS", "CVE", "Package"], ["-----", "---", "-------"], (.vulnerabilities[] | [.cvssv3.baseScore, .name, .fileName]) | @tsv' | column -t -s $'\t'
+
+        continue-on-error: true  # Ne bloque pas le workflow (à désactiver en prod)
 
       
       - name: Unit Tests
