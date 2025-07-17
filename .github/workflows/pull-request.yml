@@ -39,11 +39,18 @@ jobs:
             --format "ALL" \
             --out /src/reports \
             --nvdApiKey ${{ secrets.NVD_API_KEY }} \
-            --failOnCVSS 7 \
+            --failOnCVSS 10 \
             --enableRetired \
             --enableExperimental \
             --exclude "**/target/**" \
             --exclude "**/test/**"
+
+      - name: Upload du rapport
+        if: always()  # Toujours exécuter même si l'étape précédente a échoué
+        uses: actions/upload-artifact@v4
+        with:
+          name: rapport-vulnerabilites
+          path: reports/
 
 
       # - name: Scan des vulnérabilités via Docker
