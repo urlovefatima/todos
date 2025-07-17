@@ -37,6 +37,7 @@ jobs:
             --scan /src \
             --format JSON --format XML \
             --out /src/reports \
+            --log /src/reports/dependency-check.log \
             --nvdApiKey "${{ secrets.NVD_API_KEY }}" \
             --nvdApiDelay 2000 \
             --nvdValidForHours 24 \
