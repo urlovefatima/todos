@@ -28,7 +28,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN}}
 
 
-      - name: Analyse des vulnérabilités avec Docker
+      - name: Scan des vulnérabilités
         run: |
           mkdir -p reports
           sudo chown -R 1000:1000 reports
@@ -52,53 +52,29 @@ jobs:
         with:
           name: rapport-vulnerabilites
           path: reports/
-
-
-      # - name: Scan des vulnérabilités via Docker
-      #   run: |
-      #     mkdir reports
-      #     docker run --rm \
-      #       -v $(pwd):/src \
-      #       owasp/dependency-check \
-      #       --project "pull-request-scan" \
-      #       --scan /src \
-      #       --format JSON --format XML \
-      #       --out /src/reports \
-      #       --nvdApiKey "${{ secrets.NVD_API_KEY }}" \
-      #       --nvdApiDelay 2000 \
-      #       --nvdValidForHours 24 \
-      #       --failOnCVSS 7 \
-      #       --enableRetired \
-      #       --enableExperimental \
-      #       --exclude "**/target/**" \
-      #       --exclude "**/test/**"
-
-
-      # - name: Scan des vulnérabilités
-      #   uses: dependency-check/Dependency-Check_Action@main
-      #   with: 
-      #     project: "pull-request-scan"
-      #     path: "."
-      #     format: "JSON,XML"
-      #     args: >
-      #       --nvdApiKey ${{ secrets.NVD_API_KEY }}
-      #       --nvdApiDelay 2000
-      #       --nvdValidForHours 24
-      #       --failOnCVSS 7
-      #       --enableRetired
-      #       --enableExperimental
-      #       --exclude "**/target/**"
-      #       --exclude "**/test/**"
+    
       
       - name: Unit Tests
         run: |
           mvn test -Put -Pit
         shell: bash
 
+
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+
       - name: Quality Gate
-        run: |
-          echo "Todo : Quality Gate"
-        shell: bash
+        uses: SonarSource/sonarcloud-github-action@master
+        with:
+          projectBaseDir: .
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Check Quality Gate
         run: |
