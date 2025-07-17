@@ -30,14 +30,21 @@ jobs:
        
 
       - name: Scan des vulnérabilités
-        # Cette étape analyse les bibliothèques Java (pom.xml) pour détecter les vulnérabilités (CVEs)
-        run: |
-          mvn org.owasp:dependency-check-maven:8.2.1:check \
-            -DnvdApiKey=${{ secrets.NVD_API_KEY }} \
-            -DfailOnCVSS=7 \
-            -Dformat=JSON \
-            -DoutputDirectory=reports
-        shell: bash
+  # Cette étape analyse les bibliothèques Java (pom.xml) pour détecter les vulnérabilités (CVEs)
+        uses: dependency-check/Dependency-Check_Action@main
+        with: 
+          project: "pull-request-scan"
+          path: "."
+          format: "JSON,XML"
+          args: >
+            --nvdApiKey ${{ secrets.NVD_API_KEY }}
+            --nvdApiDelay 2000
+            --nvdValidForHours 24
+            --failOnCVSS 7
+            --enableRetired
+            --enableExperimental
+            --exclude "**/target/**"
+            --exclude "**/test/**"
       
       - name: Unit Tests
         run: |
