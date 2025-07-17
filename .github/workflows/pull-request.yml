@@ -23,6 +23,14 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Vérifier et corriger JAVA_HOME
+        run: |
+          echo "JAVA_HOME avant: $JAVA_HOME"
+          export JAVA_HOME=$JAVA_HOME_17_X64
+          echo "JAVA_HOME après: $JAVA_HOME"
+          echo "JAVA_HOME=$JAVA_HOME" >> $GITHUB_ENV
+          ls -la $JAVA_HOME/bin/java
+
       - name: Scan de secrets
         uses: gitleaks/gitleaks-action@v2
         env: 
