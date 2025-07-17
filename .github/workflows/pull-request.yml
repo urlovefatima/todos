@@ -27,6 +27,7 @@ jobs:
         env: 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN}}
 
+
       - name: Scan des vulnérabilités via Docker
         run: |
           mkdir reports
@@ -37,7 +38,6 @@ jobs:
             --scan /src \
             --format JSON --format XML \
             --out /src/reports \
-            --log /src/reports/dependency-check.log \
             --nvdApiKey "${{ secrets.NVD_API_KEY }}" \
             --nvdApiDelay 2000 \
             --nvdValidForHours 24 \
@@ -45,7 +45,26 @@ jobs:
             --enableRetired \
             --enableExperimental \
             --exclude "**/target/**" \
-            --exclude "**/test/**"
+            --exclude "**/test/**" 
+
+      # - name: Scan des vulnérabilités via Docker
+      #   run: |
+      #     mkdir reports
+      #     docker run --rm \
+      #       -v $(pwd):/src \
+      #       owasp/dependency-check \
+      #       --project "pull-request-scan" \
+      #       --scan /src \
+      #       --format JSON --format XML \
+      #       --out /src/reports \
+      #       --nvdApiKey "${{ secrets.NVD_API_KEY }}" \
+      #       --nvdApiDelay 2000 \
+      #       --nvdValidForHours 24 \
+      #       --failOnCVSS 7 \
+      #       --enableRetired \
+      #       --enableExperimental \
+      #       --exclude "**/target/**" \
+      #       --exclude "**/test/**"
 
 
       # - name: Scan des vulnérabilités
