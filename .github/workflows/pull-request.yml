@@ -29,22 +29,28 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN}}
        
 
-      - name: Scan des vulnérabilités
-  # Cette étape analyse les bibliothèques Java (pom.xml) pour détecter les vulnérabilités (CVEs)
-        uses: dependency-check/Dependency-Check_Action@main
-        with: 
-          project: "pull-request-scan"
-          path: "."
-          format: "JSON,XML"
-          args: >
-            --nvdApiKey ${{ secrets.NVD_API_KEY }}
-            --nvdApiDelay 2000
-            --nvdValidForHours 24
-            --failOnCVSS 7
-            --enableRetired
-            --enableExperimental
-            --exclude "**/target/**"
+      - name: Download Dependency-Check
+        run: |
+          curl -sSfL https://github.com/jeremylong/DependencyCheck/releases/download/v9.0.10/dependency-check-9.0.10-release.zip -o dc.zip
+          unzip -q dc.zip -d ./dependency-check
+          chmod +x ./dependency-check/bin/dependency-check.sh
+
+      - name: Run Dependency-Check
+        run: |
+          ./dependency-check/bin/dependency-check.sh \
+            --project "pull-request-scan" \
+            --scan "." \
+            --format "JSON,XML" \
+            --out "./dependency-check-report" \
+            --nvdApiKey ${{ secrets.NVD_API_KEY }} \
+            --nvdApiDelay 2000 \
+            --nvdValidForHours 24 \
+            --failOnCVSS 7 \
+            --enableRetired \
+            --enableExperimental \
+            --exclude "**/target/**" \
             --exclude "**/test/**"
+
       
       - name: Unit Tests
         run: |
