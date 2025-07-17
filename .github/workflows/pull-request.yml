@@ -67,16 +67,22 @@ jobs:
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
 
+      - name: Build with Maven
+        run: mvn clean verify
 
-      - name: Quality Gate
-        uses: SonarSource/sonarqube-scan-action@v5
-        with:
-          projectBaseDir: .
-          args: >
-            -Dsonar.projectKey=urlovefatima_todos
-            -Dsonar.organization=urlovefatima
-            -Dsonar.host.url=https://sonarcloud.io
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+      - name: SonarCloud Analysis
+        run: mvn sonar:sonar -Dsonar.projectKey=urlovefatima_todos -Dsonar.organization=urlovefatima -Dsonar.host.url=https://sonarcloud.io -Dsonar.token=${{ secrets.SONAR_TOKEN }}
+
+
+      # - name: Quality Gate
+      #   uses: SonarSource/sonarqube-scan-action@v5
+      #   with:
+      #     projectBaseDir: .
+      #     args: >
+      #       -Dsonar.projectKey=urlovefatima_todos
+      #       -Dsonar.organization=urlovefatima
+      #       -Dsonar.host.url=https://sonarcloud.io
+      #       -Dsonar.login=${{ secrets.SONAR_TOKEN }}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
