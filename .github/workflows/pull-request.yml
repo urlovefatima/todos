@@ -33,11 +33,10 @@ jobs:
         # Cette étape analyse les bibliothèques Java (pom.xml) pour détecter les vulnérabilités (CVEs)
         run: |
           mvn org.owasp:dependency-check-maven:8.2.1:check \
-          -DnvdApiKey=${{ secrets.NVD_API_KEY }} \
-          -DfailOnCVSS=7 \
-          -Dformat=ALL \
-          -DoutputDirectory=reports
-          -DsuppressHtmlReport=true
+            -DnvdApiKey=${{ secrets.NVD_API_KEY }} \
+            -DfailOnCVSS=7 \
+            -Dformat=JSON \
+            -DoutputDirectory=reports
         shell: bash
       
       - name: Unit Tests
