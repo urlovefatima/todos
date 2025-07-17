@@ -30,14 +30,14 @@ jobs:
 
       - name: Analyse des vulnérabilités avec Docker
         run: |
-          mkdir -p report
+          mkdir -p reports
           docker run --rm \
             -v ${{ github.workspace }}:/src \
             owasp/dependency-check:latest \
             --project "pull-request-scan" \
             --scan /src \
             --format "ALL" \
-            --out /src/report \
+            --out /src/reports \
             --nvdApiKey ${{ secrets.NVD_API_KEY }} \
             --failOnCVSS 7 \
             --enableRetired \
