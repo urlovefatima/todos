@@ -29,7 +29,6 @@ jobs:
 
       - name: Scan des vulnérabilités via Docker
         run: |
-          mkdir -p /src/reports
           docker run --rm \
             -v $(pwd):/src \
             owasp/dependency-check \
