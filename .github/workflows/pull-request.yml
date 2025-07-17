@@ -36,15 +36,7 @@ jobs:
           project: "pull-request-scan"
           path: "."
           format: "JSON,XML"
-          args: >
-            --nvdApiKey ${{ secrets.NVD_API_KEY }}
-            --nvdApiDelay 2000
-            --nvdValidForHours 24
-            --failOnCVSS 7
-            --enableRetired
-            --enableExperimental
-            --exclude "**/target/**"
-            --exclude "**/test/**"
+          failOnCVSS: 7.0
       
       - name: Unit Tests
         run: |
