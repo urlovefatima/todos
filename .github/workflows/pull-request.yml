@@ -22,39 +22,45 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: 'maven'
-
-      - name: Configure JAVA_HOME for Dependency-Check
-        run: |
-          echo "JAVA_HOME=${JAVA_HOME_17_X64}" >> $GITHUB_ENV
-          echo "PATH=${JAVA_HOME_17_X64}/bin:${PATH}" >> $GITHUB_ENV
-
-      # Verify Java is working
-      - name: Verify Java installation
-        run: |
-          java -version
-          echo "JAVA_HOME: $JAVA_HOME"
-
       - name: Scan de secrets
         uses: gitleaks/gitleaks-action@v2
         env: 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN}}
 
-      - name: Scan des vulnérabilités
-        uses: dependency-check/Dependency-Check_Action@main
-        with: 
-          project: "pull-request-scan"
-          path: "."
-          format: "JSON,XML"
-          args: >
-            --nvdApiKey ${{ secrets.NVD_API_KEY }}
-            --nvdApiDelay 2000
-            --nvdValidForHours 24
-            --failOnCVSS 7
-            --enableRetired
-            --enableExperimental
-            --exclude "**/target/**"
+      - name: Scan des vulnérabilités via Docker
+        run: |
+          docker run --rm \
+            -v $(pwd):/src \
+            owasp/dependency-check \
+            --project "pull-request-scan" \
+            --scan /src \
+            --format "JSON,XML" \
+            --out /src/reports \
+            --nvdApiKey "${{ secrets.NVD_API_KEY }}" \
+            --nvdApiDelay 2000 \
+            --nvdValidForHours 24 \
+            --failOnCVSS 7 \
+            --enableRetired \
+            --enableExperimental \
+            --exclude "**/target/**" \
             --exclude "**/test/**"
+
+
+      # - name: Scan des vulnérabilités
+      #   uses: dependency-check/Dependency-Check_Action@main
+      #   with: 
+      #     project: "pull-request-scan"
+      #     path: "."
+      #     format: "JSON,XML"
+      #     args: >
+      #       --nvdApiKey ${{ secrets.NVD_API_KEY }}
+      #       --nvdApiDelay 2000
+      #       --nvdValidForHours 24
+      #       --failOnCVSS 7
+      #       --enableRetired
+      #       --enableExperimental
+      #       --exclude "**/target/**"
+      #       --exclude "**/test/**"
       
       - name: Unit Tests
         run: |
