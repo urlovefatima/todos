@@ -12,6 +12,9 @@ jobs:
 
     env:
       MY_ENV_VAR: value
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
 
     steps:
       - uses: actions/checkout@v3
@@ -25,29 +28,57 @@ jobs:
           distribution: 'temurin'
 
       - name: Scan de secrets
-        run: |
-          echo "Todo : Scan de secrets"
-        shell: bash
+        uses: gitleaks/gitleaks-action@v2
+        env: 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN}}
 
       - name: Scan des vulnérabilités
         run: |
-          echo "Todo : Scan des vulnérabilités"
-        shell: bash
+          mkdir -p reports
+          sudo chown -R 1000:1000 reports
+          docker run --rm \
+            -v ${{ github.workspace }}:/src \
+            owasp/dependency-check:latest \
+            --project "pull-request-scan" \
+            --scan /src \
+            --format "HTML" --format "JSON" \
+            --out /src/reports \
+            --nvdApiKey ${{ secrets.NVD_API_KEY }} \
+            --failOnCVSS 10 \
+            --enableRetired \
+            --enableExperimental \
+            --exclude "**/target/**" \
+            --exclude "**/test/**"
+
+      - name: Upload du rapport
+        if: always()  # Toujours exécuter même si l'étape précédente a échoué
+        uses: actions/upload-artifact@v4
+        with:
+          name: rapport-vulnerabilites
+          path: reports/
+
 
       - name: Unit Tests
         run: |
           mvn test -Put -Pit
         shell: bash
 
-      - name: Quality Gate
-        run: |
-          echo "Todo : Quality Gate"
-        shell: bash
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
 
-      - name: Check Quality Gate
-        run: |
-          echo "Todo : Check Quality Gate"
-        shell: bash
+      - name: Build with Maven
+        run: mvn clean verify
+
+      - name: Quality gate + verification (checking)
+        run: mvn sonar:sonar -Dsonar.projectKey=urlovefatima_todos -Dsonar.organization=urlovefatima -Dsonar.host.url=https://sonarcloud.io -Dsonar.qualitygate.wait=true -Dsonar.token=${{ secrets.SONAR_TOKEN }}
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 
       - name: Release
         run: |
