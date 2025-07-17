@@ -77,10 +77,11 @@ jobs:
           -Dsonar.organization=urlovefatima \
           -Dsonar.host.url=https://sonarcloud.io \
           -Dsonar.token=${{ secrets.SONAR_TOKEN }} \
-          -Dsonar.qualitygate.wait=true
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          -Dsonar.qualitygate.wait=true \
+          -Dsonar.branch.name=${{ github.ref_name }} \
+          -Dsonar.scm.provider=git \
+          -Dsonar.sourceEncoding=UTF-8
+       
 
       - name: Check Quality Gate
         uses: SonarSource/sonarcloud-github-action@v2
