@@ -24,6 +24,11 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
+      - name: Configure JAVA_HOME for Dependency-Check
+        run: |
+          echo "JAVA_HOME=${JAVA_HOME_17_X64}" >> $GITHUB_ENV
+          echo "PATH=${JAVA_HOME_17_X64}/bin:${PATH}" >> $GITHUB_ENV
+
       # Verify Java is working
       - name: Verify Java installation
         run: |
