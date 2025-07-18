@@ -16,6 +16,7 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+      VERSIONN : cat(version.txt)
 
     steps:
       - uses: actions/checkout@v3
