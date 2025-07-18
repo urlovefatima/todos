@@ -137,13 +137,17 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
 
-      - name: Build and Push Docker
+      - name: Read version
+        id: set_version
+        run: echo "VERSIONN=$(cat version.txt)" >> $GITHUB_ENV
+
+      - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/todo:$(cat version.txt)
+            ${{ secrets.DOCKER_USERNAME }}/todo:${{ env.VERSIONN }}
             ${{ secrets.DOCKER_USERNAME }}/todo:latest
 
 
