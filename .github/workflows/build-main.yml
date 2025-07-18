@@ -151,8 +151,8 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/monapp:latest
 
           echo "✅ Images Docker publiées avec succès :"
-          echo "📦 ${{ secrets.DOCKER_USERNAME }}/monapp:${{ env.NEW_VERSION }}"
-          echo "📦 ${{ secrets.DOCKER_USERNAME }}/monapp:latest"
+          echo " ${{ secrets.DOCKER_USERNAME }}/monapp:${{ env.NEW_VERSION }}"
+          echo " ${{ secrets.DOCKER_USERNAME }}/monapp:latest"
 
       - name: Déploiement
         run: |
