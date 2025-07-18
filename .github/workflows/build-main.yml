@@ -84,7 +84,7 @@ jobs:
         if: github.ref == 'refs/heads/main' 
         run: |
           VERSION=$(cat version.txt)
-          echo "Releasing version $VERSION"
+          echo "Version actuelle: $VERSION"
 
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
