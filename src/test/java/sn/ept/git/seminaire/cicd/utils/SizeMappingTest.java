@@ -5,9 +5,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class SizeMappingTest {
     @Test
-    void testConstructor() {
-        // Juste pour couvrir le constructeur privé
-        assertDoesNotThrow(() -> new SizeMapping());
+    void testPrivateConstructor() throws Exception {
+        java.lang.reflect.Constructor<?> constructor = SizeMapping.class.getDeclaredConstructor();
+        constructor.setAccessible(true);
+        constructor.newInstance();
     }
     // Ajouter ici des tests pour chaque classe interne statique de SizeMapping
 } 
