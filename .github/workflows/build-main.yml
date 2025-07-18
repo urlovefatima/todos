@@ -50,6 +50,7 @@ jobs:
             --project "pull-request-scan" \
             --scan /src \
             --format "HTML" --format "JSON" \
+            --disableCentral \
             --out /src/reports \
             --nvdApiKey ${{ secrets.NVD_API_KEY }} \
             --failOnCVSS 10 \
@@ -114,7 +115,6 @@ jobs:
 
            if git rev-parse "v$VERSION" >/dev/null 2>&1; then
             echo "Tag v$VERSION already exists. Skipping release."
-            exit 1
           else
             echo $NEW_VERSION > version.txt
             git add version.txt
