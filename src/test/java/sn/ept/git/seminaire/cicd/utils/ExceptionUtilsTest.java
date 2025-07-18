@@ -53,4 +53,19 @@ class ExceptionUtilsTest {
                 () -> ExceptionUtils.throwNotFound(template,param)
         );
     }
+
+    @Test
+    void testAbsentOrThrow() {
+        Optional<String> present = Optional.of("x");
+        Optional<String> absent = Optional.empty();
+        assertDoesNotThrow(() -> ExceptionUtils.absentOrThrow(absent, "msg", "arg"));
+        assertThrows(RuntimeException.class, () -> ExceptionUtils.absentOrThrow(present, "msg", "arg"));
+    }
+    @Test
+    void testPresentOrThrow() {
+        Optional<String> present = Optional.of("x");
+        Optional<String> absent = Optional.empty();
+        assertDoesNotThrow(() -> ExceptionUtils.presentOrThrow(present, "msg", "arg"));
+        assertThrows(RuntimeException.class, () -> ExceptionUtils.presentOrThrow(absent, "msg", "arg"));
+    }
 }
