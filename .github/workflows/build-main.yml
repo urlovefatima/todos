@@ -87,8 +87,8 @@ jobs:
           echo "Version actuelle: $VERSION"
 
               # Calculer la nouvelle version
-            MAJOR=$(echo $CURRENT_VERSION | cut -d. -f1)
-            MINOR=$(echo $CURRENT_VERSION | cut -d. -f2)
+            MAJOR=$(echo $VERSION | cut -d. -f1)
+            MINOR=$(echo $VERSION | cut -d. -f2)
             NEW_MINOR=$((MINOR + 1))
 
             if [ $NEW_MINOR -eq 10 ]; then
