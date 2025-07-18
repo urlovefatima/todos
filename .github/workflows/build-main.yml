@@ -86,16 +86,38 @@ jobs:
           VERSION=$(cat version.txt)
           echo "Version actuelle: $VERSION"
 
+              # Calculer la nouvelle version
+            MAJOR=$(echo $CURRENT_VERSION | cut -d. -f1)
+            MINOR=$(echo $CURRENT_VERSION | cut -d. -f2)
+            NEW_MINOR=$((MINOR + 1))
+
+            if [ $NEW_MINOR -eq 10 ]; then
+            NEW_MAJOR=$((MAJOR + 1))
+            NEW_VERSION="${NEW_MAJOR}.0"
+            else
+              NEW_VERSION="${MAJOR}.${NEW_MINOR}"
+            fi
+          
+            echo "Nouvelle version: $NEW_VERSION"
+
+
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
 
            if git rev-parse "v$VERSION" >/dev/null 2>&1; then
             echo "Tag v$VERSION already exists. Skipping release."
+            exit 1
           else
+            echo $NEW_VERSION > version.txt
+            git add version.txt
+            git commit -m "chore: bump version to $NEW_VERSION"
             git tag "v$VERSION"
-            git push origin "v$VERSION"
-            echo "Tag v$VERSION created and pushed."
-            fi
+            git push origin main
+            git push origin "v$NEW_VERSION"
+            echo "Tag v$NEW_VERSION created and pushed."
+            echo "Version file updated to $NEW_VERSION"
+            echo "NEW_VERSION = $NEW_VERSION" >> $GITHUB_ENV
+          fi
         shell: bash
 
       - name: Build and Publish to Docker
