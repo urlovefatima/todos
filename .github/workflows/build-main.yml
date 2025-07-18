@@ -113,8 +113,9 @@ jobs:
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
 
-           if git rev-parse "v$VERSION" >/dev/null 2>&1; then
-            echo "Tag v$VERSION already exists. Skipping release."
+           if git rev-parse "v$NEW_VERSION" >/dev/null 2>&1; then
+            echo "Tag v$NEW_VERSION already exists. Skipping release."
+            exit 1
           
           else
             echo $NEW_VERSION > version.txt
@@ -141,7 +142,7 @@ jobs:
       - name: Build and Publish to Docker
         run: |
           # Construire l'image Docker avec la nouvelle version
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/todo:${{ env.NEW_VERSION }} C:\Users\assdi\Downloads\todos1\todos\Dockerfile
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/todo:${{ env.NEW_VERSION }} .
 
           # Taguer aussi la version "latest"
           docker tag ${{ secrets.DOCKER_USERNAME }}/todo:${{ env.NEW_VERSION }} ${{ secrets.DOCKER_USERNAME }}/todo:latest
