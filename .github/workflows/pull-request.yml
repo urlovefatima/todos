@@ -71,7 +71,7 @@ jobs:
         run: mvn clean verify
 
       - name: Quality gate + verification (checking)
-        run: mvn sonar:sonar -Dsonar.projectKey=urlovefatima_todos -Dsonar.organization=urlovefatima -Dsonar.host.url=https://sonarcloud.io -Dsonar.qualitygate.wait=true -Dsonar.token=${{ secrets.SONAR_TOKEN }}
+        run: mvn sonar:sonar -Dsonar.projectKey=urlovefatimaa_todos -Dsonar.organization=urlovefatimaa -Dsonar.host.url=https://sonarcloud.io -Dsonar.qualitygate.wait=true -Dsonar.token=${{ secrets.SONAR_TOKEN }}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
