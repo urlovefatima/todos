@@ -115,6 +115,7 @@ jobs:
 
            if git rev-parse "v$VERSION" >/dev/null 2>&1; then
             echo "Tag v$VERSION already exists. Skipping release."
+          
           else
             echo $NEW_VERSION > version.txt
             git add version.txt
@@ -140,7 +141,7 @@ jobs:
       - name: Build and Publish to Docker
         run: |
           # Construire l'image Docker avec la nouvelle version
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/monapp:${{ env.NEW_VERSION }} .
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/monapp:${{ env.NEW_VERSION }} Dockerfile
 
           # Taguer aussi la version "latest"
           docker tag ${{ secrets.DOCKER_USERNAME }}/monapp:${{ env.NEW_VERSION }} ${{ secrets.DOCKER_USERNAME }}/monapp:latest
