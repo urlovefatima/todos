@@ -28,6 +28,12 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Récupère tout l'historique Git pour permettre les diff
+
+
       - name: Scan de secrets
         uses: gitleaks/gitleaks-action@v2
         env: 
