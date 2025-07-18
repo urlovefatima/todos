@@ -139,10 +139,10 @@ jobs:
 
 
       - name: Read version
-       id: set_version
-       run: |
-        VERSION=$(cat version.txt)
-        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        id: set_version
+        run: |
+          VERSION=$(cat version.txt)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
