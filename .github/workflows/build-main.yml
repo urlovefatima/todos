@@ -16,6 +16,7 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+      VERSIONN : cat(version.txt)
 
     steps:
       - uses: actions/checkout@v3
@@ -137,34 +138,47 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
 
+      - name: Read version
+        id: set_version
+        run: echo "VERSIONN=$(cat version.txt)" >> $GITHUB_ENV
 
-      - name: Build and Publish to Docker
-        run: |
-          # Désactiver buildx pour utiliser le build classique
-          docker buildx rm --all-inactive 2>/dev/null || true
-          export DOCKER_BUILDKIT=0
-          
-          # Debug : vérifier les variables
-          echo "NEW_VERSION: '${{ env.NEW_VERSION }}'"
-          
-          # Obtenir la version
-          if [ -z "${{ env.NEW_VERSION }}" ]; then
-            VERSION=$(cat version.txt)
-            echo "Using fallback version: $VERSION"
-          else
-            VERSION="${{ env.NEW_VERSION }}"
-            echo "Using NEW_VERSION: $VERSION"
-          fi
-          
-          # Construire l'image Docker
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/todo:${VERSION} .
-          docker tag ${{ secrets.DOCKER_USERNAME }}/todo:${VERSION} ${{ secrets.DOCKER_USERNAME }}/todo:latest
-          
-          # Pousser les images
-          docker push ${{ secrets.DOCKER_USERNAME }}/todo:${VERSION}
-          docker push ${{ secrets.DOCKER_USERNAME }}/todo:latest
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/todo:${{ env.VERSIONN }}
+            ${{ secrets.DOCKER_USERNAME }}/todo:latest
 
-          echo "✅ Images Docker publiées avec succès"
+
+      # - name: Build and Publish to Docker
+      #   run: |
+      #     # Désactiver buildx pour utiliser le build classique
+      #     docker buildx rm --all-inactive 2>/dev/null || true
+      #     export DOCKER_BUILDKIT=0
+          
+      #     # Debug : vérifier les variables
+      #     echo "NEW_VERSION: '${{ env.NEW_VERSION }}'"
+          
+      #     # Obtenir la version
+      #     if [ -z "${{ env.NEW_VERSION }}" ]; then
+      #       VERSION=$(cat version.txt)
+      #       echo "Using fallback version: $VERSION"
+      #     else
+      #       VERSION="${{ env.NEW_VERSION }}"
+      #       echo "Using NEW_VERSION: $VERSION"
+      #     fi
+          
+          # # Construire l'image Docker
+          # docker build -t ${{ secrets.DOCKER_USERNAME }}/todo:${VERSION} .
+          # docker tag ${{ secrets.DOCKER_USERNAME }}/todo:${VERSION} ${{ secrets.DOCKER_USERNAME }}/todo:latest
+          
+          # # Pousser les images
+          # docker push ${{ secrets.DOCKER_USERNAME }}/todo:${VERSION}
+          # docker push ${{ secrets.DOCKER_USERNAME }}/todo:latest
+
+          # echo "✅ Images Docker publiées avec succès"
 
       
 
