@@ -137,28 +137,14 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
 
-      - name: Build and Publish to Docker
-        run: |
-          # Debug : vérifier la présence du Dockerfile
-          echo "Contenu du répertoire :"
-          ls -la
-
-          # Utiliser la version (NEW_VERSION ou version.txt)
-          if [ -z "${{ env.NEW_VERSION }}" ]; then
-            VERSION=$(cat version.txt)
-          else
-            VERSION="${{ env.NEW_VERSION }}"
-          fi
-          echo "Version utilisée : $VERSION"
-
-          # Construire l'image (notez le point à la fin !)
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/todo:$VERSION .
-
-          # Tag et push
-          docker tag ${{ secrets.DOCKER_USERNAME }}/todo:$VERSION ${{ secrets.DOCKER_USERNAME }}/todo:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/todo:$VERSION
-          docker push ${{ secrets.DOCKER_USERNAME }}/todo:latest
-
+      - name: Build and Push Docker
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/todo:$(cat version.txt)
+            ${{ secrets.DOCKER_USERNAME }}/todo:latest
 
 
       # - name: Build and Publish to Docker
