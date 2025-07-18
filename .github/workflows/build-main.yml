@@ -139,8 +139,10 @@ jobs:
 
 
       - name: Read version
-        id: set_version
-        run: echo "VERSIONN=$(cat version.txt)" >> $GITHUB_ENV
+       id: set_version
+       run: |
+        VERSION=$(cat version.txt)
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
@@ -148,7 +150,7 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/todo:${{ env.VERSIONN }}
+            ${{ secrets.DOCKER_USERNAME }}/todo:${{ steps.set_version.outputs.version }}
             ${{ secrets.DOCKER_USERNAME }}/todo:latest
 
 
