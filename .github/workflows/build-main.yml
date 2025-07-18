@@ -137,34 +137,57 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
 
-
       - name: Build and Publish to Docker
         run: |
-          # Désactiver buildx pour utiliser le build classique
-          docker buildx rm --all-inactive 2>/dev/null || true
-          export DOCKER_BUILDKIT=0
-          
-          # Debug : vérifier les variables
-          echo "NEW_VERSION: '${{ env.NEW_VERSION }}'"
-          
-          # Obtenir la version
+          # Debug : vérifier la présence du Dockerfile
+          echo "Contenu du répertoire :"
+          ls -la
+
+          # Utiliser la version (NEW_VERSION ou version.txt)
           if [ -z "${{ env.NEW_VERSION }}" ]; then
             VERSION=$(cat version.txt)
-            echo "Using fallback version: $VERSION"
           else
             VERSION="${{ env.NEW_VERSION }}"
-            echo "Using NEW_VERSION: $VERSION"
           fi
-          
-          # Construire l'image Docker
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/todo:${VERSION} .
-          docker tag ${{ secrets.DOCKER_USERNAME }}/todo:${VERSION} ${{ secrets.DOCKER_USERNAME }}/todo:latest
-          
-          # Pousser les images
-          docker push ${{ secrets.DOCKER_USERNAME }}/todo:${VERSION}
+          echo "Version utilisée : $VERSION"
+
+          # Construire l'image (notez le point à la fin !)
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/todo:$VERSION .
+
+          # Tag et push
+          docker tag ${{ secrets.DOCKER_USERNAME }}/todo:$VERSION ${{ secrets.DOCKER_USERNAME }}/todo:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/todo:$VERSION
           docker push ${{ secrets.DOCKER_USERNAME }}/todo:latest
 
-          echo "✅ Images Docker publiées avec succès"
+
+
+      # - name: Build and Publish to Docker
+      #   run: |
+      #     # Désactiver buildx pour utiliser le build classique
+      #     docker buildx rm --all-inactive 2>/dev/null || true
+      #     export DOCKER_BUILDKIT=0
+          
+      #     # Debug : vérifier les variables
+      #     echo "NEW_VERSION: '${{ env.NEW_VERSION }}'"
+          
+      #     # Obtenir la version
+      #     if [ -z "${{ env.NEW_VERSION }}" ]; then
+      #       VERSION=$(cat version.txt)
+      #       echo "Using fallback version: $VERSION"
+      #     else
+      #       VERSION="${{ env.NEW_VERSION }}"
+      #       echo "Using NEW_VERSION: $VERSION"
+      #     fi
+          
+          # # Construire l'image Docker
+          # docker build -t ${{ secrets.DOCKER_USERNAME }}/todo:${VERSION} .
+          # docker tag ${{ secrets.DOCKER_USERNAME }}/todo:${VERSION} ${{ secrets.DOCKER_USERNAME }}/todo:latest
+          
+          # # Pousser les images
+          # docker push ${{ secrets.DOCKER_USERNAME }}/todo:${VERSION}
+          # docker push ${{ secrets.DOCKER_USERNAME }}/todo:latest
+
+          # echo "✅ Images Docker publiées avec succès"
 
       
 
