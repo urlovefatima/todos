@@ -141,18 +141,18 @@ jobs:
       - name: Build and Publish to Docker
         run: |
           # Construire l'image Docker avec la nouvelle version
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/monapp:${{ env.NEW_VERSION }} Dockerfile
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/todo:${{ env.NEW_VERSION }} C:\Users\assdi\Downloads\todos1\todos\Dockerfile
 
           # Taguer aussi la version "latest"
-          docker tag ${{ secrets.DOCKER_USERNAME }}/monapp:${{ env.NEW_VERSION }} ${{ secrets.DOCKER_USERNAME }}/monapp:latest
+          docker tag ${{ secrets.DOCKER_USERNAME }}/todo:${{ env.NEW_VERSION }} ${{ secrets.DOCKER_USERNAME }}/todo:latest
 
           # Pousser les deux images sur Docker Hub
-          docker push ${{ secrets.DOCKER_USERNAME }}/monapp:${{ env.NEW_VERSION }}
-          docker push ${{ secrets.DOCKER_USERNAME }}/monapp:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/todo:${{ env.NEW_VERSION }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/todo:latest
 
           echo "✅ Images Docker publiées avec succès :"
-          echo " ${{ secrets.DOCKER_USERNAME }}/monapp:${{ env.NEW_VERSION }}"
-          echo " ${{ secrets.DOCKER_USERNAME }}/monapp:latest"
+          echo " ${{ secrets.DOCKER_USERNAME }}/todo:${{ env.NEW_VERSION }}"
+          echo " ${{ secrets.DOCKER_USERNAME }}/todo:latest"
 
       - name: Déploiement
         run: |
