@@ -136,24 +136,54 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      
 
 
       - name: Build and Publish to Docker
         run: |
-          # Construire l'image Docker avec la nouvelle version
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/todo:${{ env.NEW_VERSION }} .
-
-          # Taguer aussi la version "latest"
-          docker tag ${{ secrets.DOCKER_USERNAME }}/todo:${{ env.NEW_VERSION }} ${{ secrets.DOCKER_USERNAME }}/todo:latest
-
-          # Pousser les deux images sur Docker Hub
-          docker push ${{ secrets.DOCKER_USERNAME }}/todo:${{ env.NEW_VERSION }}
+          # Désactiver buildx pour utiliser le build classique
+          docker buildx rm --all-inactive 2>/dev/null || true
+          export DOCKER_BUILDKIT=0
+          
+          # Debug : vérifier les variables
+          echo "NEW_VERSION: '${{ env.NEW_VERSION }}'"
+          
+          # Obtenir la version
+          if [ -z "${{ env.NEW_VERSION }}" ]; then
+            VERSION=$(cat version.txt)
+            echo "Using fallback version: $VERSION"
+          else
+            VERSION="${{ env.NEW_VERSION }}"
+            echo "Using NEW_VERSION: $VERSION"
+          fi
+          
+          # Construire l'image Docker
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/todo:${VERSION} .
+          docker tag ${{ secrets.DOCKER_USERNAME }}/todo:${VERSION} ${{ secrets.DOCKER_USERNAME }}/todo:latest
+          
+          # Pousser les images
+          docker push ${{ secrets.DOCKER_USERNAME }}/todo:${VERSION}
           docker push ${{ secrets.DOCKER_USERNAME }}/todo:latest
 
-          echo "✅ Images Docker publiées avec succès :"
-          echo " ${{ secrets.DOCKER_USERNAME }}/todo:${{ env.NEW_VERSION }}"
-          echo " ${{ secrets.DOCKER_USERNAME }}/todo:latest"
+          echo "✅ Images Docker publiées avec succès"
+
+      
+
+
+      # - name: Build and Publish to Docker
+      #   run: |
+      #     # Construire l'image Docker avec la nouvelle version
+      #     docker build -t ${{ secrets.DOCKER_USERNAME }}/todo:${{ env.NEW_VERSION }} .
+
+      #     # Taguer aussi la version "latest"
+      #     docker tag ${{ secrets.DOCKER_USERNAME }}/todo:${{ env.NEW_VERSION }} ${{ secrets.DOCKER_USERNAME }}/todo:latest
+
+      #     # Pousser les deux images sur Docker Hub
+      #     docker push ${{ secrets.DOCKER_USERNAME }}/todo:${{ env.NEW_VERSION }}
+      #     docker push ${{ secrets.DOCKER_USERNAME }}/todo:latest
+
+      #     echo "✅ Images Docker publiées avec succès :"
+      #     echo " ${{ secrets.DOCKER_USERNAME }}/todo:${{ env.NEW_VERSION }}"
+      #     echo " ${{ secrets.DOCKER_USERNAME }}/todo:latest"
 
       - name: Déploiement
         run: |
