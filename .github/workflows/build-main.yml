@@ -29,10 +29,9 @@ jobs:
 
       - name: Scan de secrets
         uses: gitleaks/gitleaks-action@v2
-        with:
-          license: ${{ secrets.GITLEAKS_LICENSE }}
         env: 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN}}
+          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
 
       - name: Scan des vulnérabilités
         run: |
