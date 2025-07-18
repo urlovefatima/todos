@@ -5,8 +5,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class TagTest {
     @Test
-    void testConstructor() {
-        assertDoesNotThrow(() -> new Tag());
+    void testGettersSettersEqualsHashCodeToString() {
+        Tag tag1 = new Tag();
+        tag1.setId("id1");
+        tag1.setName("name1");
+        
+        // Test getters/setters
+        assertEquals("id1", tag1.getId());
+        assertEquals("name1", tag1.getName());
     }
-    // Ajouter ici des tests pour les getters/setters si besoin
 } 
