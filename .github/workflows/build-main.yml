@@ -135,6 +135,3 @@ jobs:
         run: |
           echo "Todo : DAST"
         shell: bash
-
-
-#god is great
