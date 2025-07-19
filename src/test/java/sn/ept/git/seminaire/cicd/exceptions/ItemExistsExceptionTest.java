@@ -9,4 +9,19 @@ class ItemExistsExceptionTest {
         ItemExistsException ex = new ItemExistsException("message");
         assertEquals("message", ex.getMessage());
     }
+
+    @Test
+    void testConstructorsAndFormat() {
+        ItemExistsException ex1 = new ItemExistsException();
+        ItemExistsException ex2 = new ItemExistsException("msg");
+        assertNotNull(ItemExistsException.format("template %s", "arg"));
+    }
+
+    @Test
+    void testToStringAndHashCode() {
+        ItemExistsException ex = new ItemExistsException("msg");
+        assertNotNull(ex.toString());
+        assertNotNull(ex.hashCode());
+        assertEquals("msg", ex.getMessage());
+    }
 } 

@@ -18,5 +18,9 @@ class TodoApplicationTest {
 		assertThat(ctx).isNotNull();
 	}
 
+    @Test
+    void testMain() {
+        TodoApplication.main(new String[]{});
+    }
 
 }

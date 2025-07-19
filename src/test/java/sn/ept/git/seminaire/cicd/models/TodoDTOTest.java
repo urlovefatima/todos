@@ -37,4 +37,30 @@ class TodoDTOTest {
         // Test toString (optional)
         assertNotNull(dto1.toString());
     }
+
+    @Test
+    void testGettersAndSetters() {
+        TodoDTO dto = new TodoDTO();
+        dto.setId("id");
+        dto.setTitle("title");
+        dto.setDescription("desc");
+        dto.setDateDebut(java.time.LocalDateTime.now());
+        dto.setDateFin(java.time.LocalDateTime.now().plusDays(1));
+        dto.setCompleted(true);
+        assertEquals("id", dto.getId());
+        assertEquals("title", dto.getTitle());
+        assertEquals("desc", dto.getDescription());
+        assertTrue(dto.isCompleted());
+    }
+
+    @Test
+    void testEqualsHashCodeToString() {
+        TodoDTO dto1 = new TodoDTO();
+        dto1.setId("id");
+        TodoDTO dto2 = new TodoDTO();
+        dto2.setId("id");
+        assertEquals(dto1, dto2);
+        assertEquals(dto1.hashCode(), dto2.hashCode());
+        assertNotNull(dto1.toString());
+    }
 } 
