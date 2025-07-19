@@ -27,4 +27,14 @@ class DateRangeValidatorTest {
         assertFalse(validator.isValid(invalid3, null));
         assertFalse(validator.isValid(null, null));
     }
+
+    @Test
+    void testIsValidWithEqualDates() {
+        DateRangeValidator validator = new DateRangeValidator();
+        TodoDTO dto = new TodoDTO();
+        java.time.LocalDateTime now = java.time.LocalDateTime.now();
+        dto.setDateDebut(now);
+        dto.setDateFin(now);
+        assertFalse(validator.isValid(dto, null));
+    }
 } 

@@ -165,4 +165,26 @@ class TodoExceptionHandlerTest {
                 of(new RuntimeException(msg))
         );
     }
+
+    @Test
+    void testHandleMethodArgumentNotValidException() {
+        // Mock du BindingResult avec un FieldError
+        org.springframework.validation.BindingResult bindingResult = Mockito.mock(org.springframework.validation.BindingResult.class);
+        Mockito.when(bindingResult.getFieldErrors()).thenReturn(java.util.List.of(
+                new org.springframework.validation.FieldError("object", "field", "must not be null")
+        ));
+        Mockito.when(bindingResult.getAllErrors()).thenReturn(java.util.List.of(
+                new org.springframework.validation.FieldError("object", "field", "must not be null")
+        ));
+        org.springframework.core.MethodParameter methodParameter = Mockito.mock(org.springframework.core.MethodParameter.class);
+        java.lang.reflect.Method dummyMethod = this.getClass().getDeclaredMethods()[0];
+        Mockito.when(methodParameter.getExecutable()).thenReturn(dummyMethod);
+        org.springframework.web.bind.MethodArgumentNotValidException ex = new org.springframework.web.bind.MethodArgumentNotValidException(methodParameter, bindingResult);
+        Mockito.when(request.getDescription(Mockito.anyBoolean())).thenReturn("desc");
+        TodoExceptionHandler handler = new TodoExceptionHandler();
+        var response = handler.methodArgumentNotValidException(ex, request);
+        assertThat(response.getStatusCode().value()).isEqualTo(400);
+        assertThat(response.getBody().message()).contains("field: must not be null");
+        assertThat(response.getBody().description()).isEqualTo("desc");
+    }
 }
