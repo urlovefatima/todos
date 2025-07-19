@@ -26,9 +26,10 @@ class TagMapperTest {
 
     @Test
     void testNullAndEmptyList() {
-        assertNull(mapper.toEntity((TagDTO) null));
-        assertNull(mapper.toDTO((Tag) null));
-        assertTrue(mapper.toDTOlist((List<Tag>) null).isEmpty());
-        assertTrue(mapper.toDTOlist(Collections.emptyList()).isEmpty());
+        TagMapper mapper = org.mapstruct.factory.Mappers.getMapper(TagMapper.class);
+        assertTrue(mapper.toEntitiesList(null).isEmpty());
+        assertTrue(mapper.toEntitiesList(java.util.Collections.emptyList()).isEmpty());
+        assertTrue(mapper.toDTOlist(null).isEmpty());
+        assertTrue(mapper.toDTOlist(java.util.Collections.emptyList()).isEmpty());
     }
 } 

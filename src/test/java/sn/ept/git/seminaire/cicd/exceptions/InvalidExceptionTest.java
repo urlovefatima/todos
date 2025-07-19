@@ -9,4 +9,6 @@ class InvalidExceptionTest {
         InvalidException ex = new InvalidException("message");
         assertEquals("message", ex.getMessage());
     }
+
+    // Le constructeur sans argument n'existe pas pour InvalidException, donc on ne le teste pas.
 } 

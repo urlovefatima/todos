@@ -63,4 +63,25 @@ class TodoDTOTest {
         assertEquals(dto1.hashCode(), dto2.hashCode());
         assertNotNull(dto1.toString());
     }
+
+    @Test
+    void testAllSettersAndBranches() {
+        TodoDTO dto = new TodoDTO();
+        dto.setId("id");
+        dto.setTitle("title");
+        dto.setDescription("desc");
+        dto.setDateDebut(null);
+        dto.setDateFin(null);
+        dto.setCompleted(false);
+        dto.setTags(null);
+        assertEquals("id", dto.getId());
+        assertEquals("title", dto.getTitle());
+        assertEquals("desc", dto.getDescription());
+        assertFalse(dto.isCompleted());
+        assertNull(dto.getTags());
+        assertNotNull(dto.toString());
+        assertEquals(dto, dto);
+        assertNotEquals(dto, new TodoDTO());
+        assertNotNull(dto.hashCode());
+    }
 } 

@@ -12,5 +12,13 @@ class ConstantesTest {
         InvocationTargetException ex = assertThrows(InvocationTargetException.class, constructor::newInstance);
         assertTrue(ex.getCause() instanceof UnsupportedOperationException);
     }
-    // Ajouter ici des tests pour chaque constante si besoin
+
+    @Test
+    void testAllConstantes() {
+        assertNotNull(Constantes.SYSTEM_NAME);
+        assertNotNull(Constantes.SYSTEM_ID);
+        assertNotNull(Constantes.TYPE_VALIDATION);
+        assertNotNull(Constantes.TYPE_SYSTEM);
+        assertNotNull(Constantes.TYPE_PERMISSION);
+    }
 } 

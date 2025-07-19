@@ -51,4 +51,27 @@ class TodoTest {
         assertEquals(todo1.hashCode(), todo2.hashCode());
         assertNotNull(todo1.toString());
     }
+
+    @Test
+    void testAllSettersAndBranches() {
+        Todo todo = new Todo();
+        todo.setId("id");
+        todo.setTitle("title");
+        todo.setDescription("desc");
+        todo.setDateDebut(null);
+        todo.setDateFin(null);
+        todo.setCompleted(false);
+        todo.setTags(new java.util.HashSet<>());
+        assertEquals("id", todo.getId());
+        assertEquals("title", todo.getTitle());
+        assertEquals("desc", todo.getDescription());
+        assertFalse(todo.isCompleted());
+        assertNotNull(todo.getTags());
+        assertNotNull(todo.toString());
+        assertEquals(todo, todo);
+        assertNotEquals(todo, new Todo());
+        assertNotNull(todo.hashCode());
+        todo.prePersit();
+        todo.preUpdate();
+    }
 } 

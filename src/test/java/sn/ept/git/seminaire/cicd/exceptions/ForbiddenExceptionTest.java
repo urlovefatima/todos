@@ -9,4 +9,10 @@ class ForbiddenExceptionTest {
         ForbiddenException ex = new ForbiddenException("message");
         assertEquals("message", ex.getMessage());
     }
+
+    @Test
+    void testDefaultConstructor() {
+        ForbiddenException ex = new ForbiddenException();
+        assertNotNull(ex.getMessage());
+    }
 } 

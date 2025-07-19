@@ -68,4 +68,9 @@ class ExceptionUtilsTest {
         assertDoesNotThrow(() -> ExceptionUtils.presentOrThrow(present, "msg", "arg"));
         assertThrows(RuntimeException.class, () -> ExceptionUtils.presentOrThrow(absent, "msg", "arg"));
     }
+
+    @Test
+    void testThrowNotFoundWithMultipleArgs() {
+        assertThrows(ItemNotFoundException.class, () -> ExceptionUtils.throwNotFound("Not found: %s %s", "a", "b"));
+    }
 }
