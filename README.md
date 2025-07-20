@@ -37,5 +37,4 @@ http://localhost:8080/cicd/api/todos
 Active aussi les règles Alpha, qui sont expérimentales mais peuvent détecter des failles supplémentaires. Cela augmente la couverture, mais aussi le risque de faux positifs.
 
 ## Contact
-
 Dr. SENE - <a href="mailto:senei@ept.sn">senei@ept.sn</a>
